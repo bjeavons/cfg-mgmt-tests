@@ -15,7 +15,7 @@
 - name: Checkout drush 6.x
   shell: git checkout 6.5.0
   args:
-    creates: /usr/local/src/drush
+    chdir: /usr/local/src/drush
 
 - name: Install drush for all users
   shell: ln -s /usr/local/src/drush/drush /usr/bin/drush
