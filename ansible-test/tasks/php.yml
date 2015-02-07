@@ -1,0 +1,17 @@
+---
+- name: Install PHP and modules
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - php5
+    - php5-cli
+    - php5-curl
+    - php5-gd
+    - php5-imagick
+    - php5-mysql
+    - php5-mcrypt
+    - php5-json
+
+- name: Install composer
+  shell: curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer
+  args:
+    creates: /usr/local/bin/composer

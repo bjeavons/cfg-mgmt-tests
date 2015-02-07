@@ -1,0 +1,44 @@
+---
+- name: Create top site directory
+  file:
+    path=/var/www/{{ site_name }}
+    owner=www-data
+    group=www-data
+    mode=0775
+    state=directory
+
+- name: Clone drush
+  shell: git clone https://github.com/drush-ops/drush.git /usr/local/src/drush
+  args:
+    creates: /usr/local/src/drush
+
+- name: Checkout drush 6.x
+  shell: git checkout 6.5.0
+  args:
+    creates: /usr/local/src/drush
+
+- name: Install drush for all users
+  shell: ln -s /usr/local/src/drush/drush /usr/bin/drush
+  args:
+    creates: /usr/bin/drush
+
+- name: Install drush dependencies
+  shell: composer install
+  args:
+    chdir: /usr/local/src/drush
+
+- name: Copy make file
+  template:
+      src=drupal.make.j2
+      dest=/home/vagrant/drupal.make
+
+- name: Make Drupal site
+  shell: "drush make -y /home/vagrant/drupal.make {{ document_root }}"
+  args:
+    creates: "{{ document_root }}/index.php"
+
+- name: Install Drupal
+  shell: "drush site-install -y --db-url=mysql://root:@localhost/{{ db_name }}"
+  args:
+    chdir: "{{ document_root }}"
+    creates: "{{ document_root }}/sites/default/settings.php"

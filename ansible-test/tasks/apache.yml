@@ -1,0 +1,30 @@
+---
+- name: install apache
+  apt: name=apache2 state=present
+
+- name: Activate mod_rewrite
+  apache2_module: name=rewrite state=present
+
+- name: Put "vagrant" user in www-data group
+  user:
+    name: "vagrant"
+    groups: "www-data"
+    append: yes
+
+- name: Copy across new virtual host
+  template:
+    src=virtual-hosts.conf.j2
+    dest=/etc/apache2/sites-available/{{ site_name }}.conf
+
+- name: Remove default virtual host
+  file:
+    path=/etc/apache2/sites-enabled/000-default.conf
+    state=absent
+
+- name: Enable new virtual host
+  file:
+    src=/etc/apache2/sites-available/{{ site_name }}.conf
+    dest=/etc/apache2/sites-enabled/{{ site_name }}.conf
+    state=link
+  notify:
+    - reload apache

@@ -1,0 +1,14 @@
+<VirtualHost *:80>
+  ServerAdmin webmaster@localhost
+  DocumentRoot {{ document_root }}
+
+  <Directory {{ document_root }}>
+    Options -Indexes +Includes +FollowSymLinks +Multiviews
+    AllowOverride All
+    Order allow,deny
+    allow from all
+  </Directory>
+
+  ErrorLog ${APACHE_LOG_DIR}/{{ site_name }}-error.log
+  CustomLog ${APACHE_LOG_DIR}/{{ site_name }}-access.log combined
+</VirtualHost>

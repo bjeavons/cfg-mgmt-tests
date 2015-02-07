@@ -1,0 +1,19 @@
+---
+- hosts: all
+  sudo: true
+  vars:
+    document_root: /var/www/drupal/htdocs
+    site_name: drupal
+    db_name: drupal
+  handlers:
+    - name: reload apache
+      service: name=apache2 state=reloaded
+  tasks:
+    - name: update apt cache
+      apt: update_cache=yes
+    - name: install git
+      apt: name=git state=present
+    - include: tasks/apache.yml
+    - include: tasks/mysql.yml
+    - include: tasks/php.yml
+    - include: tasks/drupal.yml
